@@ -87,9 +87,9 @@ Feel free to dive in! [Open an issue](https://github.com/AtomXT/GL-and-Threshold
 
 ### Contributors
 
-[@Salar Fattahi]()
+Salar Fattahi: fattahi@umich.edu
 
-[@Tong Xu](https://github.com/AtomXT) 
+Tong Xu: xutong@umich.edu
 
 
 ## License
