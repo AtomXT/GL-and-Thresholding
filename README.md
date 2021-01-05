@@ -14,9 +14,9 @@
 
 ## Background
 
-Consider a random verctor $\mathbf{x} = (x_1, x_2, ...,x_d)$ with a multivariate normal distribution. Let $\Sigma_{*} \in \mathbb{S}_{+}^d$ denote the covariance matrix associate with the vector $\mathbf{x}$.  The inverse of the covariance matrix can be used to determine the conditional independence between the random variables.
+Consider a random verctor x with a multivariate normal distribution. Let Sigma denote the covariance matrix associate with the vector x.  The inverse of the covariance matrix can be used to determine the conditional independence between the random variables.
 
-The sparsity graph of $\Sigma_{*}^{-1}$ represents a graphical model capturing the condittional independence between the elements of $\mathbf{x}$.
+The sparsity graph of inverse of Sigma represents a graphical model capturing the condittional independence between the elements of x.
 
 Graphical lasso (GL) is one of the most commonly used techniques for estimating the inverse covariance matrix. It is known that GL is computationally expensive for large-scale problems. Therefore, we developed an explicit closed-form solution that can serve either as an approximate solution of the GL or the optimal slution of the GL with a perturbed sample covariance matix. 
 
@@ -36,11 +36,9 @@ For Python users, our code is implemeted with Python 3.6 and you will need:
 
 ## Usage
 
-Let's say $x$ is a $n$ by $m$ sample data matrix. $n$ is the dimension of each sample and $m$ is the number of samples.
+Let's say x is a n by m sample data matrix. n is the dimension of each sample and m is the number of samples.
 
-$\mathrm{Sigma}$ is the sample covariance matrix of $x$.
-
-$\mathrm{lambda}$ is the regularization parameter for thresholding.
+Sigma is the sample covariance matrix of x, and lambda is the regularization parameter for thresholding.
 
 You can use the following code:
 
@@ -58,9 +56,9 @@ Closed_form(x, lambda)
 ```
 If the dimension of sample data is small, this function will only return the closed form solution of GL. Otherwise, it will return three matrices: 
 
-- $\mathrm{A}$ : The closed form soluton.
-- $\mathrm{S}$ : The thresholded $\mathrm{Sigma}$ and the diagonals remain unchanged.
-- $\mathrm{Sigma\_res}$ : It has the same values as $\mathrm{Sigma}$ at positions picked by thresholding, and the same diagonals as $\mathrm{Sigma}$.
+- A : The closed form soluton.
+- S : The thresholded Sigma and the diagonals remain unchanged.
+- Sigma_res : It has the same values as Sigma at positions picked by thresholding, and the same diagonals as Sigma.
 
 ### Example codes and test data
 
