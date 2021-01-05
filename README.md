@@ -1,5 +1,5 @@
 
-# Graphical Model and Thresholding
+# Graphical Lasso and Thresholding
 
 
 ## Table of Contents
