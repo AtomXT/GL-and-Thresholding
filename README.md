@@ -79,7 +79,7 @@ With the test data, run the following test code:
 
 ## Maintainers
 
-[@AtomXT](https://github.com/AtomXT).
+[@Tong Xu](https://github.com/AtomXT).
 
 ## Contributing
 
@@ -87,7 +87,9 @@ Feel free to dive in! [Open an issue](https://github.com/AtomXT/GL-and-Threshold
 
 ### Contributors
 
-[@Tong Xu](https://github.com/AtomXT)    [@Salar Fattahi]()
+[@Salar Fattahi]()
+
+[@Tong Xu](https://github.com/AtomXT) 
 
 
 ## License
