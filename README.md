@@ -1,6 +1,4 @@
-
 # Graphical Lasso and Thresholding
-
 
 ## Table of Contents
 
@@ -14,17 +12,17 @@
 
 ## Background
 
-Consider a random verctor x with a multivariate normal distribution. Let Sigma denote the covariance matrix associate with the vector x.  The inverse of the covariance matrix can be used to determine the conditional independence between the random variables.
+Consider a random vector x with a multivariate normal distribution. Let Sigma denote the covariance matrix associate with the vector x. The inverse of the covariance matrix can be used to determine the conditional independence between the random variables.
 
-The sparsity graph of inverse of Sigma represents a graphical model capturing the condittional independence between the elements of x.
+The sparsity graph of inverse of Sigma represents a graphical model capturing the conditional independence between elements of x.
 
-Graphical lasso (GL) is one of the most commonly used techniques for estimating the inverse covariance matrix. It is known that GL is computationally expensive for large-scale problems. Therefore, we developed an explicit closed-form solution that can serve either as an approximate solution of the GL or the optimal slution of the GL with a perturbed sample covariance matix. 
+Graphical lasso(GL) is one of the most commonly used techniques for estimating the inverse covariance matrix. It is known that GL is computationally expensive for large-scale problems. Therefore, we developed an explicit closed-form solution that can serve either as an approximate solution of the GL or the optimal slution of the GL with a perturbed sample covariance matix. 
 
+For a more detailed description, you can refer to this paper: [Graphical Lasso and Thresholding: Equivalence and Closed-form Solutions](https://jmlr.org/papers/v20/17-501.html)
 
 ## Install
 
-The source code is currently hosted on GitHub at: https://github.com/AtomXT/GL-and-Thresholding.
-
+The source code is currently hosted on GitHub at: https://github.com/AtomXT/GL-and-Thresholding. You can download them and simply use functions with your data.
 
 ## Requirements
 
@@ -54,11 +52,15 @@ closed_form(x, lambda)
 ```sh
 Closed_form(x, lambda)
 ```
-If the dimension of sample data is small, this function will only return the closed form solution of GL. Otherwise, it will return three matrices: 
+
+Output:
 
 - A : The closed form soluton.
-- S : The thresholded Sigma and the diagonals remain unchanged.
-- Sigma_res : It has the same values as Sigma at positions picked by thresholding, and the same diagonals as Sigma.
+- S : The soft-thresholded sample covariance matrix.
+- Sigma_hard : The hard-thresholded sample covariance matrix.
+
+This function will return A as the closed-form solution of GL. Besides that, you have the option to check the soft and hard threhsolded sample covariance matrices as well.
+
 
 ### Example codes and test data
 
@@ -83,7 +85,7 @@ With the test data, run the following test code:
 
 ## Contributing
 
-Feel free to dive in! [Open an issue](https://github.com/AtomXT/GL-and-Thresholding/issues/new) or submit PRs.
+Please feel free to make any suggestions! [Open an issue](https://github.com/AtomXT/GL-and-Thresholding/issues/new) or submit PRs.
 
 ### Contributors
 
