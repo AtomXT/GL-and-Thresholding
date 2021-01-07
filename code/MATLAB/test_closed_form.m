@@ -21,14 +21,6 @@ clear x;
 display('finding the closed form solution: done')
 Time_closed = toc
 
-% p = amd(A);
-% [~,flag] = chol(A(p,p));
-% assert(flag==0, 'A must be posdef');
-
-p = amd(S);
-[~,flag] = chol(S(p,p));
-assert(flag==0, 'A must be posdef');
-
 thresh_nnz = sum(sum(triu(abs(S),1)>0))
 
 

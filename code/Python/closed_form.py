@@ -22,7 +22,7 @@ def soft_thresholding(m, tau):
         Returns
         -------
         k_pos, k_neg : array_like
-                       Positive and negative number in thresholed `m`.
+                       Nonzero numbers in thresholed `m`.
         ii_pos, jj_pos, ii_neg, jj_neg : array_like
                                          Row and column indices of `k_pos` and `k_neg`.
     """
@@ -35,12 +35,11 @@ def soft_thresholding(m, tau):
     return ii_pos, jj_pos, ii_neg, jj_neg, k_pos, k_neg
 
 
-def sigma_res(ii, jj, kk, xd, nn, tau):
+def sigma_hard(ii, jj, kk, xd, nn, tau):
     """
     sigma_res(ii, jj, kk, xd, nn, tau)
 
-        Calculate `res`.
-        It has the same values as sigma at positions picked by thresholding, and the same diagonals as sigma.
+        Calculate the hard-thresholded sample covariance matrix relative to `tau`.
 
         Parameters
         ----------
@@ -53,36 +52,36 @@ def sigma_res(ii, jj, kk, xd, nn, tau):
         nn : float number
              The dimension of the sparse matrix
         tau : float number
-              The regularization parameter for soft thresholding.
+              The regularization parameter for thresholding.
 
         Returns
         -------
-        res : sparse matrix
-                   matrix `res`.
+        hard : sparse matrix
+               The hard-thresholded sample covariance matrix.
 
     """
-    res = csc_matrix((kk + tau * np.sign(kk), (ii, jj)), shape=(nn, nn))
-    res = res + res.T
-    res = res + diags(xd)
-    return res
+    hard = csc_matrix((kk + tau * np.sign(kk), (ii, jj)), shape=(nn, nn))
+    hard = hard + hard.T
+    hard = hard + diags(xd)
+    return hard
 
 
 def a_s(ii, jj, kk, xd, nn):
     """
-    a_s(ii, jj, kk, xd, nn)
+    A(ii, jj, kk, xd, nn)
 
-        Form the closed-form solution a and matrix s.
+        Form the closed-form solution a and the soft-thresholded sample covariance matrix.
 
         Parameters
         ----------
-        Refer to `sigma_res`.
+        Refer to `sigma_hard`.
 
         Returns
         -------
         a : sparse matrix
             The closed-form solution.
         s : sparse matrix
-            Thresholded sigma matrix and the diagonals remain unchanged.
+            The soft-thresholded sample covariance matrix.
 
     """
     s = csc_matrix((kk, (ii, jj)), shape=(nn, nn))
@@ -100,7 +99,7 @@ def a_s(ii, jj, kk, xd, nn):
     return a, s
 
 
-def closed_form(X, tau):
+def closed_form(X, tau, soft_hard=False):
     """
     closed_form(X, tau)
 
@@ -112,27 +111,19 @@ def closed_form(X, tau):
             Sample covariance matrix.
         tau : float number
               Regularization parameter.
+        soft_hard : bool, optional
+               Return soft and hard thresholded sample covariance matrix if `soft_hard`=True.
 
         Returns
         -------
-        S : sparse matrix
-            Thresholded sigma matrix.
-        A : sparse matrix
+        S : sparse matrix, optional
+            Soft thresholded sample covariance matrix.
+        AA : sparse matrix
             Closed-form solution.
-        sigmaRes : sparse matrix
+        sigma_hard : sparse matrix, optional
+                   Hard thresholed sample covariance matrix.
     """
     nn, mm = X.shape
-
-    if nn <= 0:
-        # If problem size small, just do it explicitly
-        M = np.triu(np.dot(X, X.T))
-        ii_pos, jj_pos, ii_neg, jj_neg, k_pos, k_neg = soft_thresholding(M, tau)
-        S = csc_matrix((np.concatenate((k_pos, k_neg)),
-                        np.concatenate((np.concatenate((ii_pos, jj_pos)),
-                                        np.concatenate((ii_neg, jj_neg))))), shape=(nn, nn))
-        S = S + np.triu(S, 1).T
-        return S
-
     MEMORY_LIMIT = 500  # If we allocate more than this number times n nonzeros, terminate prematurely.
 
     # Get partition size
@@ -191,9 +182,11 @@ def closed_form(X, tau):
     Xd = np.concatenate(Xd)
 
     # form sparse matrix
-    A, S = a_s(ii, jj, kk, Xd, nn)
-    sigmaRes = sigma_res(ii, jj, kk, Xd, nn, tau)
-    return S, A, sigmaRes
+    AA, S = a_s(ii, jj, kk, Xd, nn)
+    if soft_hard:
+        sigmaHard = sigma_hard(ii, jj, kk, Xd, nn, tau)
+        return S, AA, sigmaHard
+    return AA
 
 
 def closed_form_error(A, invsigma):
@@ -233,7 +226,9 @@ if __name__ == '__main__':
     data = loadmat("test.mat")
     x = data["x"]  # Sample data
     invSigma = data["invSigma"]  # Inverse of true Sigma matrix.
-    S, A, Sigma_res = closed_form(x, lam)
+
+    # S, A, SigmaHard = closed_form(x, lam)
+    A = closed_form(x, lam)
 
     # Errors
     closed_form_error(A, invSigma)
