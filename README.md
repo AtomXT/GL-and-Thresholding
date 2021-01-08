@@ -56,11 +56,8 @@ Closed_form(x, lambda)
 Output:
 
 - A : The closed form soluton.
-- S : The soft-thresholded sample covariance matrix.
-- Sigma_hard : The hard-thresholded sample covariance matrix.
 
-This function will return A as the closed-form solution of GL. Besides that, you have the option to check the soft and hard threhsolded sample covariance matrices as well.
-
+This function will return A as the closed-form solution of GL.
 
 ### Example codes and test data
 
