@@ -1,4 +1,4 @@
-function [S, A, Sigma_res] = Closed_form(X, tau)
+function A = Closed_form(X, tau)
 
 % If we allocate more than this number times n nonzeros, terminate
 % prematurely.
@@ -63,22 +63,15 @@ jj = cat(1, jj{:});
 kk = cat(1, kk{:});
 
 
-% form sparse matrix:
-% 	A is our closed-form solution.
-%	S is the soft thresholded sample covariance matirx.
-% 	Sigma_res is the hard thresholded sample covariance matrix.
+% form sparse matrix: A is our closed-form solution.
 
 S = sparse(ii,jj,kk,n,n);
-Sigma_res = sparse(ii,jj,kk+tau*sign(kk),n,n);
 [ii_a, jj_a, kk_a] = find(S);
 aa = -kk_a./(Xd(ii_a).*Xd(jj_a)-kk_a.^2);
 A = sparse(ii_a,jj_a,aa,n,n);
 A = A + A';
 S = S + S';
-Sigma_res = Sigma_res + Sigma_res';
 Atemp = transpose(1+sum(-A.*S))./(sparse(Xd));
 
 A = A + diag(sparse(Atemp));
-S = S + diag(sparse(Xd));
-Sigma_res = Sigma_res + diag(sparse(Xd));
 end

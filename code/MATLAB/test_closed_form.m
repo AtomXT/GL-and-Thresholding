@@ -15,13 +15,11 @@ lambda = K*sqrt(log(dim)/n);
 
 display('finding the closed-form solution...')
 tic
-[S, A, Sigma_res] = Closed_form(x, lambda);
+A = Closed_form(x, lambda);
 
 clear x;
 display('finding the closed form solution: done')
 Time_closed = toc
-
-thresh_nnz = sum(sum(triu(abs(S),1)>0))
 
 
 %% Errors

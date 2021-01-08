@@ -4,6 +4,7 @@
 import numpy as np
 from scipy.sparse import csc_matrix, diags
 from scipy.io import loadmat
+import time
 
 
 def soft_thresholding(m, tau):
@@ -35,11 +36,11 @@ def soft_thresholding(m, tau):
     return ii_pos, jj_pos, ii_neg, jj_neg, k_pos, k_neg
 
 
-def sigma_hard(ii, jj, kk, xd, nn, tau):
+def solution(ii, jj, kk, xd, nn):
     """
-    sigma_res(ii, jj, kk, xd, nn, tau)
+    solution(ii, jj, kk, xd, nn)
 
-        Calculate the hard-thresholded sample covariance matrix relative to `tau`.
+        Form the closed-form solution.
 
         Parameters
         ----------
@@ -51,37 +52,11 @@ def sigma_hard(ii, jj, kk, xd, nn, tau):
              Diagonals of the sample covariance matrix.
         nn : float number
              The dimension of the sparse matrix
-        tau : float number
-              The regularization parameter for thresholding.
-
-        Returns
-        -------
-        hard : sparse matrix
-               The hard-thresholded sample covariance matrix.
-
-    """
-    hard = csc_matrix((kk + tau * np.sign(kk), (ii, jj)), shape=(nn, nn))
-    hard = hard + hard.T
-    hard = hard + diags(xd)
-    return hard
-
-
-def a_s(ii, jj, kk, xd, nn):
-    """
-    A(ii, jj, kk, xd, nn)
-
-        Form the closed-form solution a and the soft-thresholded sample covariance matrix.
-
-        Parameters
-        ----------
-        Refer to `sigma_hard`.
 
         Returns
         -------
         a : sparse matrix
             The closed-form solution.
-        s : sparse matrix
-            The soft-thresholded sample covariance matrix.
 
     """
     s = csc_matrix((kk, (ii, jj)), shape=(nn, nn))
@@ -93,13 +68,11 @@ def a_s(ii, jj, kk, xd, nn):
     a = a + a.T
     s = s + s.T
     a_temp = (sum(-a.multiply(s)) + csc_matrix(np.ones(nn))) / csc_matrix(xd)
-
     a = a + diags(a_temp.A1)
-    s = s + diags(xd)
-    return a, s
+    return a
 
 
-def closed_form(X, tau, soft_hard=False):
+def closed_form(X, tau):
     """
     closed_form(X, tau)
 
@@ -111,17 +84,11 @@ def closed_form(X, tau, soft_hard=False):
             Sample covariance matrix.
         tau : float number
               Regularization parameter.
-        soft_hard : bool, optional
-               Return soft and hard thresholded sample covariance matrix if `soft_hard`=True.
 
         Returns
         -------
-        S : sparse matrix, optional
-            Soft thresholded sample covariance matrix.
         AA : sparse matrix
             Closed-form solution.
-        sigma_hard : sparse matrix, optional
-                   Hard thresholed sample covariance matrix.
     """
     nn, mm = X.shape
     MEMORY_LIMIT = 500  # If we allocate more than this number times n nonzeros, terminate prematurely.
@@ -182,10 +149,7 @@ def closed_form(X, tau, soft_hard=False):
     Xd = np.concatenate(Xd)
 
     # form sparse matrix
-    AA, S = a_s(ii, jj, kk, Xd, nn)
-    if soft_hard:
-        sigmaHard = sigma_hard(ii, jj, kk, Xd, nn, tau)
-        return S, AA, sigmaHard
+    AA = solution(ii, jj, kk, Xd, nn)
     return AA
 
 
@@ -228,7 +192,8 @@ if __name__ == '__main__':
     invSigma = data["invSigma"]  # Inverse of true Sigma matrix.
 
     # S, A, SigmaHard = closed_form(x, lam)
+    tic = time.time()
     A = closed_form(x, lam)
-
+    print("It took {} seconds.".format(time.time()-tic))
     # Errors
     closed_form_error(A, invSigma)
