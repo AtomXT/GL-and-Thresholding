@@ -92,7 +92,8 @@ def closed_form(X, tau):
     """
     nn, mm = X.shape
     MEMORY_LIMIT = 500  # If we allocate more than this number times n nonzeros, terminate prematurely.
-
+    X = X - np.mean(X, 1).reshape((nn, 1))  # Make sure that it has zero mean.
+    
     # Get partition size
     skip = int(np.ceil(np.sqrt(nn * MEMORY_LIMIT)))
     print("phase 1: done")

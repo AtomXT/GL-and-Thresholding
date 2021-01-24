@@ -1,5 +1,8 @@
 function A = Closed_form(X, tau)
 
+% Make sure X has zero mean.
+X = X - mean(X,2);
+
 % If we allocate more than this number times n nonzeros, terminate
 % prematurely.
 MEMORY_LIMIT = 500;
